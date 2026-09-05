@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <h1>My Image Gallery</h1>
+
+    <!-- Categories -->
+    <div class="filters">
+        <button onclick="filterImages('all')">All</button>
+        <button onclick="filterImages('nature')">01</button>
+        <button onclick="filterImages('city')">02</button>
+        <button onclick="filterImages('animals')">03</button>
+    </div>
+
+    <!-- Gallery -->
+    <div class="gallery">
+
+        <div class="image-box nature">
+            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.26.07 PM.jpeg" alt="Nature">
+        </div>
+
+        <div class="image-box city">
+            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.26.29 PM.jpeg" alt="City">
+        </div>
+
+        <div class="image-box animals">
+            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.26.52 PM.jpeg" alt="Animal">
+        </div>
+
+        <div class="image-box nature">
+            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.27.06 PM.jpeg" alt="Nature">
+        </div>
+
+        <div class="image-box city">
+            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.27.25 PM.jpeg" alt="City">
+        </div>
+
+        <div class="image-box animals">
+            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.28.01 PM.jpeg" alt="Animal">
+        </div>
+
+        <div class="image-box nature">
+            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.28.25 PM.jpeg" alt="Nature">
+        </div>
+
+        <div class="image-box city">
+            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.27.25 PM.jpeg" alt="City">
+        </div>
+
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+
+        <span class="close" onclick="closeLightbox()">&times;</span>
+
+        <button class="prev" onclick="changeImage(-1)">&#10094;</button>
+
+        <img id="lightboxImage" src="" alt="Large Image">
+
+        <button class="next" onclick="changeImage(1)">&#10095;</button>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
+
