@@ -1,77 +1,184 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeatherNow — Live Weather Dashboard</title>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
+<body class="theme-default">
+  
+  <!-- Notification Toast -->
+  <div id="toast" class="toast hidden"></div>
 
-<body>
+  <div class="app-container">
+    
+    <!-- Sidebar / Navigation -->
+    <aside class="sidebar glass">
+      <div class="brand">
+        <i class="fa-solid fa-cloud-sun-rain brand-icon"></i>
+        <h2>Weather<span>Now</span></h2>
+      </div>
 
-    <h1>My Image Gallery</h1>
+      <!-- Unit Toggle & API Settings -->
+      <div class="sidebar-controls">
+        <div class="unit-toggle-container">
+          <span class="unit-label">°C</span>
+          <label class="switch">
+            <input type="checkbox" id="unitToggle">
+            <span class="slider round"></span>
+          </label>
+          <span class="unit-label">°F</span>
+        </div>
+        <button id="apiKeyBtn" class="btn-icon" title="API Settings">
+          <i class="fa-solid fa-key"></i>
+        </button>
+      </div>
 
-    <!-- Categories -->
-    <div class="filters">
-        <button onclick="filterImages('all')">All</button>
-        <button onclick="filterImages('nature')">01</button>
-        <button onclick="filterImages('city')">02</button>
-        <button onclick="filterImages('animals')">03</button>
+      <!-- Favourites List -->
+      <div class="favourites-section">
+        <h3><i class="fa-solid fa-star"></i> Favourite Cities</h3>
+        <ul id="favouritesList" class="favourites-list">
+          <li class="empty-favs">No saved cities yet.</li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <p>Vanilla JS • OpenWeather API</p>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Bar: Search & Location -->
+      <header class="top-bar glass">
+        <div class="search-box-container">
+          <div class="search-input-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search city (e.g. London, Tokyo, Lahore)..." autocomplete="off">
+            <button id="clearSearch" class="btn-clear hidden"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <!-- Autocomplete Suggestions Dropdown -->
+          <ul id="autocompleteResults" class="autocomplete-dropdown hidden"></ul>
+        </div>
+
+        <button id="geoBtn" class="btn-primary">
+          <i class="fa-solid fa-location-crosshairs"></i>
+          <span>Use My Location</span>
+        </button>
+      </header>
+
+      <!-- Dashboard Grid -->
+      <div id="dashboard" class="dashboard-grid">
+        
+        <!-- Current Weather Card -->
+        <section class="card current-weather-card glass">
+          <div class="card-header">
+            <div>
+              <h1 id="cityName">London, GB</h1>
+              <p id="currentDate" class="subtitle">Loading date...</p>
+            </div>
+            <button id="favBtn" class="btn-fav" title="Save to Favourites">
+              <i class="fa-regular fa-star"></i>
+            </button>
+          </div>
+
+          <div class="weather-main">
+            <div class="temp-display">
+              <img id="weatherIcon" src="https://openweathermap.org/img/wn/10d@4x.png" alt="Weather condition">
+              <div class="temp-number-wrapper">
+                <span id="tempVal">18</span><span class="deg">°</span>
+              </div>
+            </div>
+            <div class="weather-desc-wrapper">
+              <p id="weatherDesc" class="weather-condition">Moderate Rain</p>
+              <p id="feelsLike" class="feels-like">Feels like: 17°C</p>
+            </div>
+          </div>
+
+          <div class="weather-metrics">
+            <div class="metric-item">
+              <i class="fa-solid fa-droplet"></i>
+              <div>
+                <span class="label">Humidity</span>
+                <span id="humidityVal" class="value">72%</span>
+              </div>
+            </div>
+            <div class="metric-item">
+              <i class="fa-solid fa-wind"></i>
+              <div>
+                <span class="label">Wind Speed</span>
+                <span id="windVal" class="value">14 km/h</span>
+              </div>
+            </div>
+            <div class="metric-item">
+              <i class="fa-solid fa-gauge-high"></i>
+              <div>
+                <span class="label">Pressure</span>
+                <span id="pressureVal" class="value">1013 hPa</span>
+              </div>
+            </div>
+            <div class="metric-item">
+              <i class="fa-solid fa-sun"></i>
+              <div>
+                <span class="label">Sunrise / Sunset</span>
+                <span id="sunTimes" class="value">06:12 / 18:45</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Air Quality Card -->
+        <section class="card aqi-card glass">
+          <h3><i class="fa-solid fa-wind"></i> Air Quality Index</h3>
+          <div class="aqi-badge-wrapper">
+            <div id="aqiBadge" class="aqi-badge status-good">Good</div>
+            <span id="aqiVal" class="aqi-score">AQI: 1</span>
+          </div>
+          <p id="aqiAdvice" class="aqi-advice">Air quality is ideal for most individuals.</p>
+        </section>
+
+        <!-- Hourly Forecast Chart Card -->
+        <section class="card chart-card glass">
+          <h3><i class="fa-solid fa-chart-line"></i> 24-Hour Temperature Forecast</h3>
+          <div class="chart-wrapper">
+            <canvas id="hourlyChart"></canvas>
+          </div>
+        </section>
+
+        <!-- 5-Day Forecast Card -->
+        <section class="card forecast-card glass">
+          <h3><i class="fa-solid fa-calendar-days"></i> 5-Day Forecast</h3>
+          <div id="forecastContainer" class="forecast-list"></div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- API Key Config Modal -->
+  <div id="apiModal" class="modal-backdrop hidden">
+    <div class="modal-content glass">
+      <h3><i class="fa-solid fa-key"></i> OpenWeather API Key</h3>
+      <p>Enter your OpenWeather API key to fetch real live data. If left blank, the app runs on high-precision mock data.</p>
+      <input type="text" id="apiKeyInput" placeholder="Paste your API Key here...">
+      <div class="modal-actions">
+        <button id="saveApiKey" class="btn-primary">Save Key</button>
+        <button id="closeModal" class="btn-secondary">Close / Use Mock</button>
+      </div>
     </div>
+  </div>
 
-    <!-- Gallery -->
-    <div class="gallery">
-
-        <div class="image-box nature">
-            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.26.07 PM.jpeg" alt="talha">
-        </div>
-
-        <div class="image-box city">
-            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.26.29 PM.jpeg" alt="talha">
-        </div>
-
-        <div class="image-box animals">
-            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.26.52 PM.jpeg" alt="talha">
-        </div>
-
-        <div class="image-box nature">
-            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.27.06 PM.jpeg" alt="talha">
-        </div>
-
-        <div class="image-box city">
-            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.27.25 PM.jpeg" alt="talha">
-        </div>
-
-        <div class="image-box animals">
-            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.28.01 PM.jpeg" alt="talha">
-        </div>
-
-        <div class="image-box nature">
-            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.28.25 PM.jpeg" alt="talha">
-        </div>
-
-        <div class="image-box city">
-            <img src="./asserts/WhatsApp Image 2026-09-05 at 5.27.25 PM.jpeg" alt="talha">
-        </div>
-
-    </div>
-
-    <!-- Lightbox -->
-    <div class="lightbox" id="lightbox">
-
-        <span class="close" onclick="closeLightbox()">&times;</span>
-
-        <button class="prev" onclick="changeImage(-1)">&#10094;</button>
-
-        <img id="lightboxImage" src="" alt="Large Image">
-
-        <button class="next" onclick="changeImage(1)">&#10095;</button>
-
-    </div>
-
-    <script src="script.js"></script>
-
+  <!-- Application Script (ES Module Entry Point) -->
+  <script type="module" src="app.js"></script>
 </body>
 </html>
-
